@@ -1,9 +1,9 @@
 1. FinkiOverflow
 - класи:
-    * Subject
-    * Post
-    * Comment
-    * User // листа со надворешни клучеви од сите коментари и постови шо ги напишал
+    * Subject (Id, Name)
+    * Post (Id, UserFK, SubjectFK, Text)
+    * Comment (Id, PostFK, UserFK, Text, VoteUp, VoteDown)
+    * User (Id, Name, PostFK[], CommentedPostFK[])
 - функционалности по улога:
     -- admin:
         * addSubject
