@@ -1,19 +1,19 @@
 1. FinkiOverflow
 - класи:
     * Subject (Id, Name)
-    * Post (Id, UserFK, SubjectFK, Text)
+    * Post (Id, UserFK, SubjectFK, Text, IsApproved)
     * Comment (Id, PostFK, UserFK, Text, VoteUp, VoteDown)
     * User (Id, Name, PostFK[], CommentedPostFK[])
 - функционалности по улога:
     -- admin:
-        * addSubject
-        * makeAdmin(user)
+        * addSubject - додавање на нов предмет во база
         * deletePost // сите
         * deleteComment // сите
     -- user:
         * writePost
         * writeComment
+        * gradePost(int grade)
         * deletePost // само неговите
         * deleteComment // само неговите
-    -- visitor
+    -- visitor (ненајавен)
         * само може да ги гледа постовите
