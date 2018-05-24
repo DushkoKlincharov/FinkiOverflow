@@ -1,0 +1,19 @@
+1. FinkiOverflow
+- класи:
+    * Subject
+    * Post
+    * Comment
+    * User // листа со надворешни клучеви од сите коментари и постови шо ги напишал
+- функционалности по улога:
+    -- admin:
+        * addSubject
+        * makeAdmin(user)
+        * deletePost // сите
+        * deleteComment // сите
+    -- user:
+        * writePost
+        * writeComment
+        * deletePost // само неговите
+        * deleteComment // само неговите
+    -- visitor
+        * само може да ги гледа постовите
