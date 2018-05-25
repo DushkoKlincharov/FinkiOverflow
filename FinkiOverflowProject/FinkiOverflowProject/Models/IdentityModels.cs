@@ -25,6 +25,11 @@ namespace FinkiOverflowProject.Models
         {
         }
 
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Post> Posts { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
