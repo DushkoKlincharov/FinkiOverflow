@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<p>
+    @Html.ActionLink("Ask question", "Create")
+</p>
+
+<table id="post-table" class="table">
+    <thead>
+        <tr>
+            <th>Questions</th>
+        </tr>
+    </thead>
+    <tbody id="post-table-body">
+        
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).on("ready", function () {
+            var table_body = $("#post-table-body");
+            $.get("/api/PostsApi", function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = $("<tr></tr>")
+                    var td = $("<td></td>")
+                    td.append($("<a class=\"h4\" href=\"/api/StudentsApi/" + data[i].StudentId + "\"></a>").html(data[i].Student+"<br>"));
+                    td.append($("<a class=\"h5\" href=\"/api/SubjectsApi/" + data[i].SubjectId + "\"></a>").html(data[i].Subject+"<br>"));
+                    td.append($("<strong></strong>").text(data[i].Text));
+                    var comments = $("<ul></ul>");
+                    for (var j = 0; j < data[i].Comments.length; j++) {
+                        var item = $("<li></li>");
+                        item.append($("<a class=\"h6\" href=\"/api/StudentsApi/" + data[i].Comments[j].StudentId + "\"></a>").html(data[i].Comments[j].Student + "<br>"));
+                        item.append($("<p></p>").text(data[i].Comments[j].Text));
+                        comments.append(item);
+                    }
+                    td.append(comments);
+                    row.append(td);
+                    table_body.append(row);
+                };
+                $("#post-table").DataTable({
+                    "ordering": false
+                });
+            })
+            
+            
+        });
+    </script>    
+}
