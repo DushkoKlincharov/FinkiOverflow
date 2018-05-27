@@ -6,14 +6,16 @@
     @Html.ActionLink("Ask question", "Create")
 </p>
 
-<table id="post-table" class="table">
+<table id="post-table" class="table table-hover">
     <thead>
         <tr>
             <th>Questions</th>
+            <th>Authors</th>
+            <th>Subject</th>
         </tr>
     </thead>
     <tbody id="post-table-body">
-        
+                  
     </tbody>
 </table>
 
@@ -24,27 +26,27 @@
             $.get("/api/PostsApi", function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var row = $("<tr></tr>")
-                    var td = $("<td></td>")
-                    td.append($("<a class=\"h4\" href=\"/api/StudentsApi/" + data[i].StudentId + "\"></a>").html(data[i].Student+"<br>"));
-                    td.append($("<a class=\"h5\" href=\"/api/SubjectsApi/" + data[i].SubjectId + "\"></a>").html(data[i].Subject+"<br>"));
-                    td.append($("<strong></strong>").text(data[i].Text));
-                    var comments = $("<ul></ul>");
+                    var question = $("<td></td>")
+                    var author = $("<td></td>")
+                    var subject = $("<td></td>")
+                    author.append($("<a class=\"h5\" href=\"/Students/Details/" + data[i].StudentId + "\"></a>").html(data[i].Student + "<br>"));
+                    subject.append($("<a class=\"h5\" href=\"/Subjects/Details/" + data[i].SubjectId + "\"></a>").html(data[i].Subject + "<br>"));
+                    question.append($("<a class=\"h4 strong\" href=\"/Posts/Details/" + data[i].Id + "\"></a>").html(data[i].Text));
+                    /*var comments = $("<ul></ul>");
                     for (var j = 0; j < data[i].Comments.length; j++) {
                         var item = $("<li></li>");
-                        item.append($("<a class=\"h6\" href=\"/api/StudentsApi/" + data[i].Comments[j].StudentId + "\"></a>").html(data[i].Comments[j].Student + "<br>"));
+                        item.append($("<a class=\"h6\" href=\"/Students/Details/" + data[i].Comments[j].StudentId + "\"></a>").html(data[i].Comments[j].Student + "<br>"));
                         item.append($("<p></p>").text(data[i].Comments[j].Text));
                         comments.append(item);
                     }
-                    td.append(comments);
-                    row.append(td);
+                    td.append(comments);*/
+                    row.append(question, author, subject);
                     table_body.append(row);
                 };
                 $("#post-table").DataTable({
                     "ordering": false
                 });
-            })
-            
-            
+            });
         });
     </script>    
 }

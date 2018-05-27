@@ -1,17 +1,19 @@
-﻿@model FinkiOverflowProject.Models.Post
+﻿@model FinkiOverflowProject.Models.Comment
 
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create Post</h2>
-<hr />
+<h2>Create</h2>
 
-@using (Html.BeginForm()) 
+
+@using (Html.BeginForm(new { postId = Request.QueryString["postId"]}))
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
+        <h4>Comment</h4>
+        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.Text, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -22,30 +24,37 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.VotesUp, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsApproved)
-                    @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
-                </div>
+                @Html.EditorFor(model => model.VotesUp, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.VotesUp, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.SubjectId, "Subject", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.VotesDown, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("SubjectId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SubjectId, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.VotesDown, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.VotesDown, "", new { @class = "text-danger" })
             </div>
         </div>
 
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.PostId, "PostId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("PostId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PostId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
         <div class="form-group">
-            @Html.LabelFor(model => model.StudentId, "Student", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.StudentId, "StudentId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("StudentId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.StudentId, "", new { @class = "text-danger" })
             </div>
         </div>
+        
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

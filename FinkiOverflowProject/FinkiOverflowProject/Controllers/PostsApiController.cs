@@ -37,20 +37,38 @@ namespace FinkiOverflowProject.Controllers
                     VotesDown = c.VotesDown,
                     VotesUp = c.VotesUp
                 }).Where(c => c.PostId == x.Id).ToList()
-            }).ToList();
+            }).OrderBy(p => p.Id).ToList();
         }
 
         // GET: api/PostsApi/5
         [ResponseType(typeof(Post))]
         public IHttpActionResult GetPost(int id)
         {
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.Include(p => p.Student).Include(p => p.Subject).FirstOrDefault(p => p.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
-
-            return Ok(post);
+            PostDto postDto = new PostDto()
+            {
+                Id = post.Id,
+                Student = post.Student.UserName,
+                StudentId = post.StudentId,
+                Subject = post.Subject.Name,
+                SubjectId = post.SubjectId,
+                Text = post.Text,
+                Comments = db.Comments.Select(c => new CommentDto
+                {
+                    Id = c.Id,
+                    PostId = c.PostId,
+                    Student = c.Student.UserName,
+                    StudentId = c.StudentId,
+                    Text = c.Text,
+                    VotesDown = c.VotesDown,
+                    VotesUp = c.VotesUp
+                }).Where(c => c.PostId == post.Id).ToList()
+            };
+            return Ok(postDto);
         }
 
         // PUT: api/PostsApi/5

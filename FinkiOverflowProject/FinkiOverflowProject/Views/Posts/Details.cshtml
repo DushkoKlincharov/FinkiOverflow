@@ -1,50 +1,48 @@
-﻿@model FinkiOverflowProject.Models.Post
-
-@{
+﻿@{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div id="question"></div>
+<a id="create-comment">Create comment</a>
+<table id="comments-table" style="width:100%">
+    <thead>
+        <tr>
+            <th>Comments</th>
+            <th>Authors</th>
+        </tr>
+    </thead>
+    <tbody id="comments-table-body">
 
-<div>
-    <h4>Post</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Student.UserName)
-        </dt>
+    </tbody>
+</table>
 
-        <dd>
-            @Html.DisplayFor(model => model.Student.UserName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Subject.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Subject.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Text)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Text)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IsApproved)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsApproved)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+@section scripts{
+    <script>
+        $(document).on("ready", function () {
+            var url = window.location.href.split("/");
+            var create_comment = $("#create-comment");
+            create_comment.attr("href", "/Comments/Create?postId=" + url[url.length - 1]);
+            $.get("/api/PostsApi/" + url[url.length - 1], function (data) {
+                var question = $("#question");
+                question.append($("<h2></h2>").text(data.Text));
+                question.append($("<a class=\"h5\" href=\"/Students/Details/" + data.StudentId + "\"></a>").html(data.Student + "<br>"));
+                question.append($("<a class=\"h5\" href=\"/Subjects/Details/" + data.SubjectId + "\"></a>").html(data.Subject + "<br>"));
+                var comments = $("#comments-table-body");
+                for (var j = 0; j < data.Comments.length; j++) {
+                    var item = $("<tr></tr>");
+                    var comment = $("<td></td>")
+                    var author = $("<td></td>")
+                    comment.append($("<p></p>").text(data.Comments[j].Text));
+                    author.append($("<a class=\"h6\" href=\"/Students/Details/" + data.Comments[j].StudentId + "\"></a>").html(data.Comments[j].Student + "<br>"));
+                    item.append(comment, author);
+                    comments.append(item);
+                };
+                /*$("#comments-table").DataTable({
+                    "ordering": false
+                });*/
+            });
+            
+        });
+        
+    </script>    
+}
