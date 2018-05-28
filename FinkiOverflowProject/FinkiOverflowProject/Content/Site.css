@@ -22,3 +22,13 @@ select,
 textarea {
     max-width: 280px;
 }
+
+#ask-question{
+    margin: 10px;
+    text-align: center;
+}
+
+.question-text{
+    max-width: 100%;
+    width: 100%;
+}

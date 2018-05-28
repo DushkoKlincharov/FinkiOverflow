@@ -48,3 +48,48 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+<table id="student-table" class="table table-hover">
+    <thead>
+        <tr>
+            <th>Questions</th>
+            @*<th>Authors</th>*@
+            <th>Subject</th>
+        </tr>
+    </thead>
+    <tbody id="student-table-body"></tbody>
+</table>
+
+
+@section scripts{
+    <script>
+        var studentId = @Model.Id;
+        $(document).on("ready", function () {
+            var table_body = $("#student-table-body");
+            $.get("/api/StudentsApi/" + studentId, function (data) {
+                for (var i = 0; i < data.Posts.length; i++) {
+                    var row = $("<tr></tr>")
+                    var question = $("<td></td>")
+                    //var author = $("<td></td>")
+                    var subject = $("<td></td>")
+                    //author.append($("<a class=\"h5\" href=\"/Students/Details/" + data[i].StudentId + "\"></a>").html(data[i].Student + "<br>"));
+                    subject.append($("<a class=\"h5\" href=\"/Subjects/Details/" + data.Posts[i].SubjectId + "\"></a>").html(data.Posts[i].Subject + "<br>"));
+                    question.append($("<a class=\"h4 strong\" href=\"/Posts/Details/" + data.Posts[i].Id + "\"></a>").html(data.Posts[i].Text));
+                    /*var comments = $("<ul></ul>");
+                    for (var j = 0; j < data[i].Comments.length; j++) {
+                        var item = $("<li></li>");
+                        item.append($("<a class=\"h6\" href=\"/Students/Details/" + data[i].Comments[j].StudentId + "\"></a>").html(data[i].Comments[j].Student + "<br>"));
+                        item.append($("<p></p>").text(data[i].Comments[j].Text));
+                        comments.append(item);
+                    }
+                    td.append(comments);*/
+                    row.append(question, subject);
+                    table_body.append(row);
+                };
+                $("#student-table").DataTable({
+                    "ordering": false
+                });
+            });
+        });
+    </script>
+}

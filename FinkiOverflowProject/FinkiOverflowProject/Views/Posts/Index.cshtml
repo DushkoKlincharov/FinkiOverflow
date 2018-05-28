@@ -2,10 +2,9 @@
     ViewBag.Title = "Index";
 }
 
-<p>
-    @Html.ActionLink("Ask question", "Create")
-</p>
-
+<div id="ask-question">
+@Html.ActionLink("Ask question", "Create", null, new { @class = "btn btn-primary"})
+</div>
 <table id="post-table" class="table table-hover">
     <thead>
         <tr>
