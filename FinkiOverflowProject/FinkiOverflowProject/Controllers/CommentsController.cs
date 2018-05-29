@@ -90,9 +90,10 @@ namespace FinkiOverflowProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                //comment.PostId = int.Parse(Request.QueryString["postId"]);
                 db.Entry(comment).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details/" + comment.PostId, "Posts");
             }
             ViewBag.PostId = new SelectList(db.Posts, "Id", "Text", comment.PostId);
             ViewBag.StudentId = new SelectList(db.Students, "Id", "UserName", comment.StudentId);

@@ -37,7 +37,7 @@ namespace FinkiOverflowProject.Controllers
                     VotesDown = c.VotesDown,
                     VotesUp = c.VotesUp
                 }).Where(c => c.PostId == x.Id).ToList()
-            }).OrderBy(p => p.Id).ToList();
+            }).OrderByDescending(p => p.Id).ToList();
         }
 
         // GET: api/PostsApi/5

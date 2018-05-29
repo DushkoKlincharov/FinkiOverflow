@@ -17,8 +17,9 @@ namespace FinkiOverflowProject.Controllers
         // GET: Posts
         public ActionResult Index()
         {
-            var posts = db.Posts.Include(p => p.Student).Include(p => p.Subject);
-            return View(posts.ToList());
+            //var posts = db.Posts.Include(p => p.Student).Include(p => p.Subject);
+            //return View(posts.ToList());
+            return View();
         }
 
         // GET: Posts/Details/5

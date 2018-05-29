@@ -1,48 +1,63 @@
-﻿@{
+﻿@model FinkiOverflowProject.Models.Post
+@{
     ViewBag.Title = "Details";
 }
 
-<div id="question"></div>
-<a id="create-comment">Create comment</a>
-<table id="comments-table" style="width:100%">
+<div id="question" style="display:inline-block"></div>
+<!--ako najaveniot user e ist so model.userid-->
+<div id="edit_delete" style="margin-top:20px">
+    <a id="edit-post" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span></a>
+    <a id="remove-post" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+</div>
+<div class="text-center" style="margin:10px">
+    <a id="create-comment" class="btn btn-primary">Create comment</a>
+</div>
+
+<table class="table table-hover" id="comments-table" style="width:100%">
     <thead>
         <tr>
-            <th>Comments</th>
-            <th>Authors</th>
+            <th style="width:70%">Comments</th>
+            <th style="width:20%">Authors</th>
+            <th></th>
         </tr>
     </thead>
-    <tbody id="comments-table-body">
-
-    </tbody>
+    <tbody id="comments-table-body"></tbody>
 </table>
 
 @section scripts{
-    <script>
+<script>
         $(document).on("ready", function () {
+            var model = @Html.Raw(Json.Encode(Model)); // treba za proverka za displej na kopcinja edit i delete vo komentar
             var url = window.location.href.split("/");
             var create_comment = $("#create-comment");
             create_comment.attr("href", "/Comments/Create?postId=" + url[url.length - 1]);
+            $("#remove-post").attr("href", "/Posts/Delete/" + url[url.length - 1]);
+            $("#edit-post").attr("href", "/Posts/Edit/" + url[url.length - 1]);
             $.get("/api/PostsApi/" + url[url.length - 1], function (data) {
                 var question = $("#question");
-                question.append($("<h2></h2>").text(data.Text));
-                question.append($("<a class=\"h5\" href=\"/Students/Details/" + data.StudentId + "\"></a>").html(data.Student + "<br>"));
-                question.append($("<a class=\"h5\" href=\"/Subjects/Details/" + data.SubjectId + "\"></a>").html(data.Subject + "<br>"));
+                question.text(data.Text + " - ").addClass("h2").css({ 'margin-top': '20px', 'margin-right': '10px' });
+                question.append($("<a class=\"h4\" href=\"/Subjects/Details/" + data.SubjectId + "\"></a>").html(data.Subject).css({ 'margin-right': '10px' }));
+                question.append($("<a class=\"h5\" href=\"/Students/Details/" + data.StudentId + "\"></a>").html('(' + data.Student + ')'));
+                
                 var comments = $("#comments-table-body");
                 for (var j = 0; j < data.Comments.length; j++) {
                     var item = $("<tr></tr>");
                     var comment = $("<td></td>")
                     var author = $("<td></td>")
+                    var buttons = $("<td></td>")
                     comment.append($("<p></p>").text(data.Comments[j].Text));
                     author.append($("<a class=\"h6\" href=\"/Students/Details/" + data.Comments[j].StudentId + "\"></a>").html(data.Comments[j].Student + "<br>"));
-                    item.append(comment, author);
+                    buttons.append($("<a></a>").addClass("btn btn-success").html("<span class=\"glyphicon glyphicon-edit\"></span>").attr("href", "/Comments/Edit/" + data.Comments[j].Id).css({ "display": "inline-block", "margin-right": "10px" }));
+                    buttons.append($("<a></a>").addClass("btn btn-danger").html("<span class=\"glyphicon glyphicon-remove\"></span>").attr("href", "/Comments/Delete/" + data.Comments[j].Id));
+                    item.append(comment, author, buttons);
                     comments.append(item);
                 };
-                /*$("#comments-table").DataTable({
+                $("#comments-table").DataTable({
                     "ordering": false
-                });*/
+                });
             });
-            
+
         });
-        
-    </script>    
+
+</script>
 }
