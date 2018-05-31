@@ -11,7 +11,8 @@ namespace FinkiOverflowProject
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/Datatables/jquery.dataTables.js",
-                        "~/Scripts/Datatables/dataTables.bootstrap.js"
+                        "~/Scripts/Datatables/dataTables.bootstrap.js",
+                        "~/Scripts/bootbox.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

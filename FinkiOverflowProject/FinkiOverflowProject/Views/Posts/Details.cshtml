@@ -7,7 +7,7 @@
 <!--ako najaveniot user e ist so model.userid-->
 <div id="edit_delete" style="margin-top:20px">
     <a id="edit-post" class="btn btn-success"><span class="glyphicon glyphicon-edit"></span></a>
-    <a id="remove-post" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+    <button id="remove-post" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
 </div>
 <div class="text-center" style="margin:10px">
     <a id="create-comment" class="btn btn-primary">Create comment</a>
@@ -31,7 +31,7 @@
             var url = window.location.href.split("/");
             var create_comment = $("#create-comment");
             create_comment.attr("href", "/Comments/Create?postId=" + url[url.length - 1]);
-            $("#remove-post").attr("href", "/Posts/Delete/" + url[url.length - 1]);
+            //$("#remove-post").attr("href", "/Posts/Delete/" + url[url.length - 1]);
             $("#edit-post").attr("href", "/Posts/Edit/" + url[url.length - 1]);
             $.get("/api/PostsApi/" + url[url.length - 1], function (data) {
                 var question = $("#question");
@@ -48,15 +48,43 @@
                     comment.append($("<p></p>").text(data.Comments[j].Text));
                     author.append($("<a class=\"h6\" href=\"/Students/Details/" + data.Comments[j].StudentId + "\"></a>").html(data.Comments[j].Student + "<br>"));
                     buttons.append($("<a></a>").addClass("btn btn-success").html("<span class=\"glyphicon glyphicon-edit\"></span>").attr("href", "/Comments/Edit/" + data.Comments[j].Id).css({ "display": "inline-block", "margin-right": "10px" }));
-                    buttons.append($("<a></a>").addClass("btn btn-danger").html("<span class=\"glyphicon glyphicon-remove\"></span>").attr("href", "/Comments/Delete/" + data.Comments[j].Id));
+                    buttons.append($("<button></button>").addClass("btn btn-danger js-delete").html("<span class=\"glyphicon glyphicon-remove\"></span>").attr("comment-id", data.Comments[j].Id));
                     item.append(comment, author, buttons);
                     comments.append(item);
                 };
-                $("#comments-table").DataTable({
+                table = $("#comments-table").DataTable({
                     "ordering": false
                 });
+                $(".js-delete").on("click", function () {
+                    var button = $(this);
+                    bootbox.confirm("Do you want to delete this comment?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/CommentsApi/" + button.attr("comment-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    });
+                });
             });
-
+            $("#remove-post").on("click", function () {
+                var button = $(this);
+                bootbox.confirm("Do you want to delete this question?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/PostsApi/" + url[url.length - 1],
+                            method: "DELETE",
+                            success: function () {
+                                window.location = "/Posts/Index";
+                            }
+                        });
+                    }
+                });
+            });
+            
         });
 
 </script>
