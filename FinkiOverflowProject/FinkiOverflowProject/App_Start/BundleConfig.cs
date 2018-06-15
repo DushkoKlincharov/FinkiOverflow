@@ -11,7 +11,7 @@ namespace FinkiOverflowProject
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/Datatables/jquery.dataTables.js",
-                        "~/Scripts/Datatables/dataTables.bootstrap.js",
+                        "~/Scripts/Datatables/dataTables.bootstrap4.min.js",
                         "~/Scripts/bootbox.js"
                         ));
 
@@ -28,9 +28,10 @@ namespace FinkiOverflowProject
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/DataTables/css/dataTables.bootstrap.css",
-                      "~/Content/Site.css"));
+                      "~/Content/bootstrap.min.css",
+                      "~/Content/DataTables/css/dataTables.bootstrap4.min.css",
+                      "~/Content/font-awesome/css/font-awesome.css",
+                      "~/Content/custom.css"));
         }
     }
 }

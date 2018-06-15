@@ -3,68 +3,70 @@
 
 
 
-<div class="row">
-    <div class="col">
-        asdas
-    </div>
-    <div class="col">
-        <table id="post-table" class="table table-hover">
-            <thead>
-                <tr>
-                    <th style="width:4%"></th>
-                    <th style="width:5%"></th>
-                    <th style="width:91%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                foreach (PostViewModel post in Model)
-                {
-                    <tr>
-                        <td>
-                            <div class="card border-0">
-                                <div class="card-header text-center">
-                                    @post.Votes
-                                </div>
-                                <div class="card-body">
-                                    votes
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="card border-0">
-                                <div class="card-header text-center">
-                                    @post.Answers
-                                </div>
-                                <div class="card-body">
-                                    answers
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="card border-0">
-                                <div class="card-header text-center">
-                                    @Html.ActionLink(post.PostTitle, "", "")
-                                </div>
-                                <div class="card-body text-right">
-                                    asked @post.TimeAsked.Minute minutes ago by @Html.ActionLink(post.StudentName, "", "")
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                }
+<table id="post-table" class="table table-hover">
+    <thead style="display:none;">
+        <tr>
+            <th style="width:4%"></th>
+            <th style="width:5%"></th>
+            <th style="width:91%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+        foreach (PostViewModel post in Model)
+        {
+            <tr>
+                <td>
+                    <div class="card border-0 text-center">
+                        <div class="card-header">
+                            @post.Votes
+                        </div>
+                        <div class="card-body">
+                            votes
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card border-0 text-center">
+                        <div class="card-header">
+                            @post.Answers
+                        </div>
+                        <div class="card-body">
+                            answers
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="card border-0">
+      
+                        <div class="card-header text-left">
+                            @Html.ActionLink(post.PostTitle, "", "")
+                            
+                        </div>
+                        <div class="card-body text-left border-0">
+                            @post.PostBody
+                        </div>
+                        <div class="card-footer text-right border-0">
+                            asked @post.TimeAsked.Minute minutes ago by @Html.ActionLink(post.StudentName, "", "")
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+        }
 
-            </tbody>
-        </table>
-    </div>
-</div>
+    </tbody>
+</table>
+
 
 @section scripts{
     <script>
         $(document).ready(function () {
 
-            $("#post-table").DataTable();
+            $("#post-table").DataTable({
+                searching: false,
+                lengthChange: false
+            });
 
         });
     </script>    

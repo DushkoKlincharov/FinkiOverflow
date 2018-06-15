@@ -19,21 +19,6 @@ namespace FinkiOverflowProject.Controllers
         {
             List<PostViewModel> model = db.Posts.Include(s => s.Student).Include(s => s.Comments).ToList().ConvertAll(post => new PostViewModel()
             {
-                 Answers = post.Comments.Count,
-                 Votes = post.Votes,
-                 PostTitle = post.Title,
-                 TimeAsked = post.TimeAsked,
-                 StudentName = post.Student.FirstName  
-
-            });
-            return View(model);
-        }
-
-        // Get: Posts/IndexDetails
-        public ActionResult IndexDetails()
-        {
-            List<PostViewModel> model = db.Posts.Include(s => s.Student).Include(s => s.Comments).ToList().ConvertAll(post => new PostViewModel()
-            {
                 Answers = post.Comments.Count,
                 Votes = post.Votes,
                 PostBody = post.Text,
@@ -44,6 +29,7 @@ namespace FinkiOverflowProject.Controllers
             });
             return View(model);
         }
+
 
         // GET: Posts/Details/5
         public ActionResult Details(int? id)

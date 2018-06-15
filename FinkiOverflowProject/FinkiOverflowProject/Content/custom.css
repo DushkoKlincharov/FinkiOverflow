@@ -1,0 +1,9 @@
+﻿
+ul.flex-column > li > i{
+    font-size:23px;
+}
+
+ul.flex-column > li{
+    margin-left:10px;
+    margin-bottom:10px;
+}
