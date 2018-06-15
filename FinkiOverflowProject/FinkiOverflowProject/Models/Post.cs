@@ -14,6 +14,9 @@ namespace FinkiOverflowProject.Models
         [Required]
         public string Text { get; set; }
         public bool IsApproved { get; set; } = false;
+        public string Title { get; set; }
+        public DateTime TimeAsked { get; set; }
+        public int Votes { get; set; }
 
         // Foreign keys
         public int SubjectId { get; set; }

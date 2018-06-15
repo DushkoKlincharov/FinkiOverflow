@@ -1,51 +1,71 @@
-﻿@{
-    ViewBag.Title = "Index";
-}
+﻿@using FinkiOverflowProject.Models
+@model List<PostViewModel>
 
-<div id="ask-question">
-@Html.ActionLink("Ask question", "Create", null, new { @class = "btn btn-primary"})
+
+
+<div class="row">
+    <div class="col">
+        asdas
+    </div>
+    <div class="col">
+        <table id="post-table" class="table table-hover">
+            <thead>
+                <tr>
+                    <th style="width:4%"></th>
+                    <th style="width:5%"></th>
+                    <th style="width:91%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                foreach (PostViewModel post in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="card border-0">
+                                <div class="card-header text-center">
+                                    @post.Votes
+                                </div>
+                                <div class="card-body">
+                                    votes
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card border-0">
+                                <div class="card-header text-center">
+                                    @post.Answers
+                                </div>
+                                <div class="card-body">
+                                    answers
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card border-0">
+                                <div class="card-header text-center">
+                                    @Html.ActionLink(post.PostTitle, "", "")
+                                </div>
+                                <div class="card-body text-right">
+                                    asked @post.TimeAsked.Minute minutes ago by @Html.ActionLink(post.StudentName, "", "")
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                }
+
+            </tbody>
+        </table>
+    </div>
 </div>
-<table id="post-table" class="table table-hover">
-    <thead>
-        <tr>
-            <th>Questions</th>
-            <th>Authors</th>
-            <th>Subject</th>
-        </tr>
-    </thead>
-    <tbody id="post-table-body">
-                  
-    </tbody>
-</table>
 
 @section scripts{
     <script>
-        $(document).on("ready", function () {
-            var table_body = $("#post-table-body");
-            $.get("/api/PostsApi", function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var row = $("<tr></tr>")
-                    var question = $("<td></td>")
-                    var author = $("<td></td>")
-                    var subject = $("<td></td>")
-                    author.append($("<a class=\"h5\" href=\"/Students/Details/" + data[i].StudentId + "\"></a>").html(data[i].Student + "<br>"));
-                    subject.append($("<a class=\"h5\" href=\"/Subjects/Details/" + data[i].SubjectId + "\"></a>").html(data[i].Subject + "<br>"));
-                    question.append($("<a class=\"h4 strong\" href=\"/Posts/Details/" + data[i].Id + "\"></a>").html(data[i].Text));
-                    /*var comments = $("<ul></ul>");
-                    for (var j = 0; j < data[i].Comments.length; j++) {
-                        var item = $("<li></li>");
-                        item.append($("<a class=\"h6\" href=\"/Students/Details/" + data[i].Comments[j].StudentId + "\"></a>").html(data[i].Comments[j].Student + "<br>"));
-                        item.append($("<p></p>").text(data[i].Comments[j].Text));
-                        comments.append(item);
-                    }
-                    td.append(comments);*/
-                    row.append(question, author, subject);
-                    table_body.append(row);
-                };
-                $("#post-table").DataTable({
-                    "ordering": false
-                });
-            });
+        $(document).ready(function () {
+
+            $("#post-table").DataTable();
+
         });
     </script>    
 }

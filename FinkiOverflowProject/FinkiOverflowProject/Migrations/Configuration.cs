@@ -1,17 +1,16 @@
 ﻿namespace FinkiOverflowProject.Migrations
 {
-    using FinkiOverflowProject.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using FinkiOverflowProject.Models;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<FinkiOverflowProject.Models.ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(FinkiOverflowProject.Models.ApplicationDbContext context)
@@ -25,10 +24,44 @@
             Student branko = new Student() { Id = 2, FirstName = "Бранко", LastName = "Фурнаџиски", UserName = "brane.berovo", ImageURL = "imgurl" };
             Student david = new Student() { Id = 3, FirstName = "Давид", LastName = "Ристов", UserName = "dacho", ImageURL = "imgurl" };
 
-            Post p1 = new Post() { Id = 1, Subject = dm1, Student = dushko, Text = "Како се поврзани матриците со системите линеарни равенки?" };
-            Post p2 = new Post() { Id = 2, Subject = vi, Student = branko, Text = "Дали А* е информирано пребарување?" };
-            Post p3 = new Post() { Id = 3, Subject = bp, Student = david, Text = "Што означува SELECT * FROM наредбата?" };
-            Post p4 = new Post() { Id = 4, Subject = rob, Student = branko, Text = "Што означува диференцијален погон кај роботи?" };
+            Post p1 = new Post()
+            {
+                Id = 1,
+                Subject = dm1,
+                Student = dushko,
+                Text = "Како се поврзани матриците со системите линеарни равенки?"
+            ,
+                Title = "Релацијата помеѓу матриците и линеарните равенки",
+                TimeAsked = DateTime.Now
+            };
+            Post p2 = new Post()
+            {
+                Id = 2,
+                Subject = vi,
+                Student = branko,
+                Text = "Дали А* е информирано пребарување?"
+            ,
+                Title = "Алгоритми за пребарување",
+                TimeAsked = DateTime.Now
+            };
+            Post p3 = new Post()
+            {
+                Id = 3,
+                Subject = bp,
+                Student = david,
+                Text = "Што означува SELECT * FROM наредбата?",
+                Title = "Наредби кај SQL",
+                TimeAsked = DateTime.Now
+            };
+            Post p4 = new Post()
+            {
+                Id = 4,
+                Subject = rob,
+                Student = branko,
+                Text = "Што означува диференцијален погон кај роботи?",
+                Title = "Моторни движења во роботика",
+                TimeAsked = DateTime.Now
+            };
 
             Comment c1 = new Comment() { Id = 1, Post = p1, Student = branko, Text = "Матрицата е скратен запис од коефициентите во линеарни равенки.", VotesDown = 1, VotesUp = 3 };
             Comment c2 = new Comment() { Id = 2, Post = p2, Student = david, Text = "Информирано е", VotesDown = 0, VotesUp = 1 };
