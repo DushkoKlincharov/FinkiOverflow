@@ -16,6 +16,8 @@ namespace FinkiOverflowProject.Models
         [Required]
         [Range(1, 4)]
         public int Year { get; set; }
+        [Required]
+        public string Description { get; set; }
 
         // Foreign keys
         public ICollection<Post> Posts { get; set; }

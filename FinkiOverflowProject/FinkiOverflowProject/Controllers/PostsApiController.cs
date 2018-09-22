@@ -125,15 +125,70 @@ namespace FinkiOverflowProject.Controllers
         [ResponseType(typeof(Post))]
         public IHttpActionResult DeletePost(int id)
         {
+            Post post = db.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            List<Comment> comments = post.Comments.ToList();
+            foreach(Comment comment in comments)
+            {
+                List<StudentComment> scs = db.StudentComments.Where(s => s.CommentId == comment.Id).ToList();
+                foreach (StudentComment sc in scs)
+                {
+                    db.StudentComments.Remove(sc);
+                }
+            }
+            List<StudentPost> sps = db.StudentPosts.Where(s => s.PostId == id).ToList();
+            foreach(StudentPost sp in sps)
+            {
+                db.StudentPosts.Remove(sp);
+            }
+            db.Posts.Remove(post);
+            db.SaveChanges();
+            return Ok(post);
+        }
+
+        // PUT: api/PostsApi/approve/5
+        [HttpPut]
+        [ResponseType(typeof(Post))]
+        public IHttpActionResult ApprovePost(int id)
+        {
+            Post post = db.Posts.Find(id);
+            if(post == null)
+            {
+                return NotFound();
+            }
+            post.IsApproved = true;
+            db.SaveChanges();
+            return Ok(post);
+        }
+
+        [HttpPut]
+        public IHttpActionResult UpvotePost(int id)
+        {
+            Post post = db.Posts.Find(id);
+            if(post == null)
+            {
+                return NotFound();
+            }
+            ++post.Votes;
+            ++post.NumberOfVotes;
+            db.SaveChanges();
+            return Ok(post);
+        }
+
+        [HttpPut]
+        public IHttpActionResult DownvotePost(int id)
+        {
             Post post = db.Posts.Find(id);
             if (post == null)
             {
                 return NotFound();
             }
-
-            db.Posts.Remove(post);
+            --post.Votes;
+            ++post.NumberOfVotes;
             db.SaveChanges();
-
             return Ok(post);
         }
 

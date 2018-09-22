@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FinkiOverflowProject.Models;
+using Microsoft.AspNet.Identity;
 
 namespace FinkiOverflowProject.Controllers
 {
@@ -124,6 +125,104 @@ namespace FinkiOverflowProject.Controllers
             db.Comments.Remove(comment);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ViewComments(int postId)
+        {
+          
+            return View(GetCommentsViewModelFor(postId));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult DeleteComments()
+        {
+            List<Comment> model = db.Comments.Include(c => c.Post).Include(c => c.Student).ToList().OrderBy(c => c.TimeAnswered).Reverse().ToList();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ViewComments(CommentsViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                if(string.IsNullOrEmpty(User.Identity.GetUserId()))
+                {
+                    ModelState.AddModelError("User", "User not logged in");
+                    return View(GetCommentsViewModelFor(model.PostId));
+                }
+                Comment comment = new Comment()
+                {
+                    Text = model.NewCommentText,
+                    PostId = model.PostId,
+                    StudentId = model.CurrentStudentId,
+                    TimeAnswered = DateTime.Now
+                };
+                StudentComment studentComment = new StudentComment()
+                {
+                     CommentId = comment.Id,
+                     StudentId = comment.StudentId,
+                     Voted = false
+                };
+                Post post = db.Posts.Include(p => p.Comments).FirstOrDefault(p => p.Id == model.PostId);
+                post.Comments.Add(comment);
+                db.StudentComments.Add(studentComment);
+                db.SaveChanges();
+                return RedirectToAction("ViewComments", new { postId = model.PostId });
+            }
+            return View(GetCommentsViewModelFor(model.PostId));
+        }
+
+        private CommentsViewModel GetCommentsViewModelFor(int postId)
+        {
+            Post post = db.Posts
+               .Include(p => p.Comments)
+               .Include(p => p.Student)
+               .Include(p => p.Subject)
+               .FirstOrDefault(p => p.Id == postId);
+            List<Comment> PostComments = db.Comments
+                .Include(c => c.Student)
+                .ToList()
+                .Where(c => post.Comments.Contains(c))
+                .OrderByDescending(c => c.TimeAnswered)
+                .ToList();
+            List<CommentViewModel> Comments = new List<CommentViewModel>();
+            foreach (Comment comment in PostComments)
+            {
+                CommentViewModel c = new CommentViewModel()
+                {
+                    StudentId = comment.Student.Id,
+                    StudentFirstName = comment.Student.FirstName,
+                    StudentLastName = comment.Student.LastName,
+                    ImageUrl = comment.Student.ImageURL,
+                    TimeAnswered = comment.TimeAnswered,
+                    CommentBody = comment.Text,
+                    CommentId = comment.Id,
+                    VotesUp = comment.VotesUp,
+                    VotesDown = comment.VotesDown
+                };
+                Comments.Add(c);
+            }
+            string currentStudentId = User.Identity.GetUserId();
+            CommentsViewModel model = new CommentsViewModel
+            {
+                PostId = post.Id,
+                PostTitle = post.Title,
+                PostText = post.Text,
+                PostVotes = post.Votes,
+                PostAnswers = Comments.Count,
+                StudentId = post.Student.Id,
+                StudentFirstName = post.Student.FirstName,
+                StudentLastName = post.Student.LastName,
+                StudentImageUrl = post.Student.ImageURL,
+                Comments = Comments,
+                SubjectId = post.Subject.Id,
+                SubjectName = post.Subject.Name,
+                CurrentStudentId = db.Students.FirstOrDefault(s => s.UserId.Equals(currentStudentId)).Id,
+                isUserLoggedIn = string.IsNullOrEmpty(currentStudentId) ? false : true,
+                TimeAsked = post.TimeAsked
+        };
+            return model;
         }
 
         protected override void Dispose(bool disposing)

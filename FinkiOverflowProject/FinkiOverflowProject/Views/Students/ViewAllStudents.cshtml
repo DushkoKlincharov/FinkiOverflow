@@ -1,0 +1,90 @@
+﻿@using FinkiOverflowProject.Models
+@model List<StudentsViewModel>
+
+@{
+    ViewBag.Title = "ViewAllStudents";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        @Html.ActionLink("Home", "Index", "Posts", null, null)
+    </li>
+    <li class="breadcrumb-item active">Students</li>
+</ol>
+
+<table id="students-table" class="table">
+    <thead style="display:none;">
+        <tr>
+            @{ int size = Model.Count;}
+            @if (size < 4)
+            {
+                for (int i = 0; i < size; ++i)
+                {
+                    <th style="width:25%"></th>
+                }
+            }
+            else
+            {
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{ int counter = 0;}
+        @{
+            foreach (StudentsViewModel student in Model)
+            {
+                if (counter % 4 == 0)
+                {
+                    @:<tr>
+                    }
+                    <td>
+                        <div class="media">
+                            <img src="https://www.gravatar.com/avatar/d291e4dfbf14dcc8874bd4fa620fac23?s=96&d=identicon&r=PG&f=1" class="img-fluid">
+                            <div class="media-body ml-2">
+                                @Html.ActionLink(student.Username, "ViewStudent", "Students", new { id = student.StudentId }, null)<br />
+                                <small class="text-muted">@student.City</small><br>
+                                <small class="font-weight-bold" title="Number of posts">@student.NumberOfPosts</small><br>
+                                @if (!student.SubjectName.IsEmpty())
+                                {
+                                    <a href="@Url.Action("ViewPostsForSubject", "Posts", new { id = student.SubjectId })"><small class="text-muted" title="Top subject">@student.SubjectName</small></a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+
+                    ++counter;
+                    if (counter % 4 == 0 || counter == size)
+                    {
+                    @:</tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#students-table");
+
+            $("#students-table").DataTable({
+                lengthChange: false
+            });
+
+            var modelLength = @Model.Count;
+            if (modelLength == 1) {
+                table.addClass("w-25");
+            } else if (modelLength == 2) {
+                table.addClass("w-50");
+            } else if (modelLength == 3) {
+                table.addClass("w-75");
+            }
+        });
+    </script>
+}
+

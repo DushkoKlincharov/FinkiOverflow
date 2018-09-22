@@ -1,0 +1,167 @@
+﻿@using FinkiOverflowProject.Models
+@model List<Comment>
+
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">Settings</li>
+    <li class="breadcrumb-item active">View my comments</li>
+</ol>
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Top questions
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="comments-table" class="table">
+                <thead style="display:none;">
+                    <tr>
+                        <th style="width:4%"></th>
+                        <th style="width:5%"></th>
+                        <th style="width:91%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (Comment comment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="card border-0 text-center">
+                                        <div class="card-header">
+                                            @comment.VotesUp
+                                        </div>
+                                        <div class="card-body">
+                                            @if (comment.VotesUp == 1)
+                                            {
+                                                <span>vote up</span>
+                                            }
+                                            else
+                                            {
+                                                <span>votes up</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="card border-0 text-center">
+                                        <div class="card-header">
+                                            @comment.VotesDown
+                                        </div>
+                                        <div class="card-body">
+                                            @if (comment.VotesDown == 1)
+                                            {
+                                                <span>vote down</span>
+                                            }
+                                            else
+                                            {
+                                                <span>votes down</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="card border-0">
+
+                                        <div class="card-header clearfix">
+                                            @Html.ActionLink(comment.Text.Length > 50 ? comment.Text.Substring(0, 50) + "..." : comment.Text, "ViewComments", "Comments", new { postId = comment.PostId }, new { @class = "float-left" })
+                                            <button data-comment-id="@comment.Id" type="button" class="btn btn-danger js-delete float-right"><span class="fa fa-times"></span></button>
+                                        </div>
+                                        <div class="card-footer clearfix border-0">
+                                            <a href="@Url.Action("ViewComments", "Comments", new { postId = comment.PostId })"><small class="text-muted" title="Post">@comment.Post.Title</small></a>
+                                            <span class="float-right">
+                                                @{
+                                                    System.TimeSpan totalTime = DateTime.Now.Subtract(comment.TimeAnswered);
+                                                    int timePassed = (int)totalTime.TotalSeconds;
+                                                    string time = "seconds";
+                                                    if (timePassed == 1)
+                                                    {
+                                                        time = "second";
+                                                    }
+                                                    else if (timePassed > 59)
+                                                    {
+                                                        timePassed = (int)totalTime.TotalMinutes;
+                                                        if (timePassed > 59)
+                                                        {
+                                                            timePassed = (int)totalTime.TotalHours;
+                                                            if (timePassed > 23)
+                                                            {
+                                                                timePassed = (int)totalTime.TotalDays;
+                                                                if (timePassed == 1)
+                                                                {
+                                                                    time = "day";
+                                                                }
+                                                                else
+                                                                {
+                                                                    time = "days";
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (timePassed == 1)
+                                                                {
+                                                                    time = "hour";
+                                                                }
+                                                                else
+                                                                {
+                                                                    time = "hours";
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            if (timePassed == 1)
+                                                            {
+                                                                time = "minute";
+                                                            }
+                                                            else
+                                                            {
+                                                                time = "minutes";
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+                                                answered @timePassed @time ago by @Html.ActionLink(comment.Student.FirstName, "ViewStudent", "Students", new { id = comment.StudentId }, null)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            var table = $("#comments-table").DataTable({
+                searching: false,
+                lengthChange: false
+            });
+
+            $(".js-delete").on("click", function () {
+                var button = $(this);
+                $.ajax({
+                    method: "DELETE",
+                    url: "/api/CommentsApi/DeleteComment/" + button.attr("data-comment-id"),
+                    success: function () {
+                        table.row(button.parents("tr")).remove().draw();
+                    }
+                });
+            });
+
+        });
+    </script>
+}

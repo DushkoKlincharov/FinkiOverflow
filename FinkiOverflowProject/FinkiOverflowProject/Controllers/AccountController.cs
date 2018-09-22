@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FinkiOverflowProject.Models;
+using System.Collections.Generic;
 
 namespace FinkiOverflowProject.Controllers
 {
@@ -17,6 +18,7 @@ namespace FinkiOverflowProject.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public AccountController()
         {
@@ -52,6 +54,26 @@ namespace FinkiOverflowProject.Controllers
             }
         }
 
+        public ActionResult AddUserToRole()
+        {
+            AddToRoleModel model = new AddToRoleModel();
+            model.roles = new List<string>() { "Admin", "User" };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult AddUserToRole(AddToRoleModel model)
+        {
+            var email = model.Email;
+            var user = UserManager.FindByEmail(model.Email);
+            if (user == null)
+                return HttpNotFound();
+
+            UserManager.AddToRole(user.Id, model.selectedRole);
+            return RedirectToAction("Index", "Posts");
+        }
+
         //
         // GET: /Account/Login
         [AllowAnonymous]
@@ -79,7 +101,7 @@ namespace FinkiOverflowProject.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index","Posts");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -151,19 +173,57 @@ namespace FinkiOverflowProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var u = UserManager.FindByEmail(model.Email);
+                if(u != null)
+                {
+                    ModelState.AddModelError("Username", "This username already exists.");
+                    return View(model);
+                }
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("Index", "Home");
+                    UserManager.AddToRole(user.Id, "User");
+                    Student student = new Student()
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        UserName = model.Email,
+                        City = model.City,
+                        UserId = UserManager.FindByEmail(model.Email).Id
+                    };
+                    List<Post> posts = db.Posts.ToList();
+                    List<Comment> comments = db.Comments.ToList();
+                    foreach(Post post in posts)
+                    {
+                        StudentPost sp = new StudentPost()
+                        {
+                            Post = post,
+                            Student = student,
+                            Voted = false
+                        };
+                        db.StudentPosts.Add(sp);
+                    }
+                    foreach(Comment comment in comments)
+                    {
+                        StudentComment sc = new StudentComment()
+                        {
+                            Comment = comment,
+                            Student = student,
+                            Voted = false
+                        };
+                        db.StudentComments.Add(sc);
+                    }
+                    db.Students.Add(student);
+                    db.SaveChanges();
+                    return RedirectToAction("Login", "Account");
                 }
                 AddErrors(result);
             }
@@ -392,7 +452,7 @@ namespace FinkiOverflowProject.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //

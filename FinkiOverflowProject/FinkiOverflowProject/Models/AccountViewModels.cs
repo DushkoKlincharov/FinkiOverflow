@@ -65,8 +65,8 @@ namespace FinkiOverflowProject.Models
     public class RegisterViewModel
     {
         [Required]
-        [EmailAddress]
         [Display(Name = "Email")]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]
@@ -79,6 +79,18 @@ namespace FinkiOverflowProject.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "First name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last name")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "City")]
+        public string City { get; set; }
     }
 
     public class ResetPasswordViewModel

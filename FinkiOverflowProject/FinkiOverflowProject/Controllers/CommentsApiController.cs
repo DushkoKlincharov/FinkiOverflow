@@ -94,10 +94,40 @@ namespace FinkiOverflowProject.Controllers
             {
                 return NotFound();
             }
-
+            List<StudentComment> scs = db.StudentComments.Where(s => s.CommentId == comment.Id).ToList();
+            foreach (StudentComment sc in scs)
+            {
+                db.StudentComments.Remove(sc);
+            }
             db.Comments.Remove(comment);
             db.SaveChanges();
 
+            return Ok(comment);
+        }
+
+        [HttpPut]
+        public IHttpActionResult UpvoteComment(int id)
+        {
+            Comment comment = db.Comments.Find(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            ++comment.VotesUp;
+            db.SaveChanges();
+            return Ok(comment);
+        }
+
+        [HttpPut]
+        public IHttpActionResult DownvoteComment(int id)
+        {
+            Comment comment = db.Comments.Find(id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            ++comment.VotesDown;
+            db.SaveChanges();
             return Ok(comment);
         }
 

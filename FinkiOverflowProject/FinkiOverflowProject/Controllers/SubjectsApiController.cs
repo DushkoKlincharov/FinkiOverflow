@@ -112,7 +112,23 @@ namespace FinkiOverflowProject.Controllers
         [ResponseType(typeof(Subject))]
         public IHttpActionResult DeleteSubject(int id)
         {
-            Subject subject = db.Subjects.Find(id);
+            Subject subject = db.Subjects.Include(s => s.Posts).FirstOrDefault(s => s.Id == id);
+            if (subject == null)
+            {
+                return NotFound();
+            }
+
+            db.Subjects.Remove(subject);
+            db.SaveChanges();
+
+            return Ok(subject);
+        }
+
+        [HttpDelete]
+        [ResponseType(typeof(Subject))]
+        public IHttpActionResult DeleteSubjectAndItsPosts(int id)
+        {
+            Subject subject = db.Subjects.Include(s => s.Posts).FirstOrDefault(s => s.Id == id);
             if (subject == null)
             {
                 return NotFound();

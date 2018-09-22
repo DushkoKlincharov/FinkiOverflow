@@ -1,0 +1,127 @@
+﻿@using FinkiOverflowProject.Models
+@model List<SubjectViewModel>
+
+@{
+    ViewBag.Title = "ViewAllStudents";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        @Html.ActionLink("Home", "Index", "Posts", null, null)
+    </li>
+    <li class="breadcrumb-item active">Subjects</li>
+</ol>
+
+
+<table id="subjects-table" class="table">
+    <thead style="display:none;">
+        <tr>
+            @{ int size = Model.Count;}
+            @if (size < 4)
+            {
+                for (int i = 0; i < size; ++i)
+                {
+                    <th style="width:25%"></th>
+                }
+            }
+            else
+            {
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+                <th style="width:25%"></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{ int counter = 0;}
+        @{
+            foreach (SubjectViewModel subject in Model)
+            {
+                if (counter % 4 == 0)
+                {
+                    @:<tr style="font-size:30px;">
+                    }
+                    <td class="w-25">
+                        <div class="text-muted">
+                            <div style="font-size: 16px">
+                                <a href="@Url.Action("ViewPostsForSubject", "Posts",new { id = subject.Id })" data-toggle="tooltip" title="text"><span class="badge badge-secondary badge-pill">@subject.Name</span></a>
+                                <small class="text-muted"> x </small>
+                                <small class="text-muted" title="Number of posts">@subject.NumberOfPosts</small>
+                            </div>
+                            <div style="font-size: 12px;display:block;height:70px;" class="py-2">
+                                @if(subject.Description.Length > 169)
+                                {
+                                    <span>@subject.Description.Substring(0, 169)</span>
+                                }
+                                else
+                                {
+                                    <span>@subject.Description</span>
+                                }
+                            </div>
+                            <div style="font-size: 16px" class="clearfix">
+                                <small class="font-weight-light float-left">@subject.Year</small>
+                                <a class="fa-stack fa-2x float-right" data-toggle="modal" data-target=@String.Format("#myModal{0}",subject.Id) style="font-size:13px;" role="button" href="#">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fas fa-flag fa-stack-1x fa-inverse"></i>
+                                </a>
+                                <!-- The Modal -->
+                                <div class="modal hide fade in" id=@String.Format("myModal{0}",subject.Id) data-keyboard="false" data-backdrop="static">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">@subject.Name</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                @subject.Description
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    ++counter;
+                    if (counter % 4 == 0 || counter == size)
+                    {
+                    @:</tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#subjects-table");
+            $("#subjects-table").DataTable({
+                lengthChange: false
+            });
+
+            var modelLength = @Model.Count;
+            if (modelLength == 1) {
+                table.addClass("w-25");
+            } else if (modelLength == 2) {
+                table.addClass("w-50");
+            } else if (modelLength == 3) {
+                table.addClass("w-75");
+            }
+
+        });
+    </script>
+}
+

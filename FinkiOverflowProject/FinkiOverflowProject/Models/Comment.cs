@@ -15,6 +15,7 @@ namespace FinkiOverflowProject.Models
         public string Text { get; set; }
         public int VotesUp { get; set; } = 0;
         public int VotesDown { get; set; } = 0;
+        public DateTime TimeAnswered { get; set; }
 
         // Foreign Keys
         public int PostId { get; set; }

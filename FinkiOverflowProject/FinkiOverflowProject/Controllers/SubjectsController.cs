@@ -35,6 +35,7 @@ namespace FinkiOverflowProject.Controllers
             return View(subject);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Subjects/Create
         public ActionResult Create()
         {
@@ -45,14 +46,15 @@ namespace FinkiOverflowProject.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Year")] Subject subject)
+        public ActionResult Create([Bind(Include = "Id,Name,Year,Description")] Subject subject)
         {
             if (ModelState.IsValid)
             {
                 db.Subjects.Add(subject);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ViewAllSubjects");
             }
 
             return View(subject);
@@ -78,13 +80,13 @@ namespace FinkiOverflowProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Year")] Subject subject)
+        public ActionResult Edit([Bind(Include = "Id,Name,Year,Description")] Subject subject)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(subject).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("DeleteSubjects");
             }
             return View(subject);
         }
@@ -113,6 +115,45 @@ namespace FinkiOverflowProject.Controllers
             db.Subjects.Remove(subject);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ViewAllSubjects()
+        {
+            return View(GetSubjectViewModelWithApprovedPosts());
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult DeleteSubjects()
+        {
+            return View(GetSubjectViewModelWithApprovedPosts());
+        }
+
+        private List<SubjectViewModel> GetSubjectViewModelWithApprovedPosts()
+        {
+            List<string> years = new List<string>();
+            years.Add("First year");
+            years.Add("Second year");
+            years.Add("Third year");
+            years.Add("Fourth year");
+            List<SubjectViewModel> model = db.Subjects.Include(s => s.Posts).ToList()
+                .Select(s => new Subject()
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Year = s.Year,
+                    Description = s.Description,
+                    Posts = s.Posts.Where(p => p.IsApproved).ToList()
+                })
+                .ToList()
+                .ConvertAll(subject => new SubjectViewModel()
+                {
+                    Id = subject.Id,
+                    Name = subject.Name,
+                    Description = subject.Description,
+                    NumberOfPosts = subject.Posts.Count,
+                    Year = years.ElementAt(subject.Year - 1)
+                });
+            return model;
         }
 
         protected override void Dispose(bool disposing)

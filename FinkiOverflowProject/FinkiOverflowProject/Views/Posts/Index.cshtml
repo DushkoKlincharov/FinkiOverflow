@@ -1,62 +1,167 @@
 ﻿@using FinkiOverflowProject.Models
+@using Microsoft.AspNet.Identity;
 @model List<PostViewModel>
 
 
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        @Html.ActionLink("Home", "Index", "Posts", null, null)
+    </li>
+    <li class="breadcrumb-item active">Posts</li>
+</ol>
 
-<table id="post-table" class="table table-hover">
-    <thead style="display:none;">
-        <tr>
-            <th style="width:4%"></th>
-            <th style="width:5%"></th>
-            <th style="width:91%"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-        foreach (PostViewModel post in Model)
+<!-- DataTables Example -->
+<div class="card mb-3">
+    <div class="card-header clearfix">
+        <div class="float-left mt-2">
+            <i class="fas fa-table"></i>
+            Top questions
+        </div>
+
+        @if (!string.IsNullOrEmpty(User.Identity.GetUserId()))
         {
-            <tr>
-                <td>
-                    <div class="card border-0 text-center">
-                        <div class="card-header">
-                            @post.Votes
-                        </div>
-                        <div class="card-body">
-                            votes
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="card border-0 text-center">
-                        <div class="card-header">
-                            @post.Answers
-                        </div>
-                        <div class="card-body">
-                            answers
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="card border-0">
-      
-                        <div class="card-header text-left">
-                            @Html.ActionLink(post.PostTitle, "", "")
-                            
-                        </div>
-                        <div class="card-body text-left border-0">
-                            @post.PostBody
-                        </div>
-                        <div class="card-footer text-right border-0">
-                            asked @post.TimeAsked.Minute minutes ago by @Html.ActionLink(post.StudentName, "", "")
-                        </div>
-                    </div>
-                </td>
-            </tr>
+            <div class="float-right">
+                @Html.ActionLink("Ask a question", "Create", "Posts", null, new { @class = "btn btn-primary" })
+            </div>
         }
-        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="post-table" class="table">
+                <thead style="display:none;">
+                    <tr>
+                        <th style="width:4%"></th>
+                        <th style="width:5%"></th>
+                        <th style="width:91%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (PostViewModel post in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="card border-0 text-center">
+                                        <div class="card-header">
+                                            @post.NumberOfVotes
+                                        </div>
+                                        <div class="card-body">
+                                            @if (post.NumberOfVotes == 1)
+                                            {
+                                                <span>vote</span>
+                                            }
+                                            else
+                                            {
+                                                <span>votes</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="card border-0 text-center">
+                                        <div class="card-header">
+                                            @post.Answers
+                                        </div>
+                                        <div class="card-body">
+                                            @if (post.Answers == 1)
+                                            {
+                                                <span>answer</span>
+                                            }
+                                            else
+                                            {
+                                                <span>answers</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="card border-0">
 
-    </tbody>
-</table>
+                                        <div class="card-header text-left">
+                                            @{ 
+                                                string postTitle = post.PostTitle;
+                                                if (postTitle.Length > 80)
+                                                {
+                                                    postTitle = postTitle.Substring(0, 80) + "...";
+                                                }
+                                            }
+                                            @Html.ActionLink(postTitle, "ViewComments", "Comments", new { postId = post.PostId }, null)
+
+                                        </div>
+                                        <div class="card-footer clearfix border-0">
+                                            <a href="@Url.Action("ViewPostsForSubject", "Posts", new { id = post.SubjectId })"><small class="text-muted" title="Top subject">@post.SubjectName</small></a>
+                                            <span class="float-right">
+                                                @{
+                                                    System.TimeSpan totalTime = DateTime.Now.Subtract(post.TimeAsked);
+                                                    int timePassed = (int)totalTime.TotalSeconds;
+                                                    string time = "seconds";
+                                                    if (timePassed == 1)
+                                                    {
+                                                        time = "second";
+                                                    }
+                                                    else if (timePassed > 59)
+                                                    {
+                                                        timePassed = (int)totalTime.TotalMinutes;
+                                                        if (timePassed > 59)
+                                                        {
+                                                            timePassed = (int)totalTime.TotalHours;
+                                                            if (timePassed > 23)
+                                                            {
+                                                                timePassed = (int)totalTime.TotalDays;
+                                                                if (timePassed == 1)
+                                                                {
+                                                                    time = "day";
+                                                                }
+                                                                else
+                                                                {
+                                                                    time = "days";
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (timePassed == 1)
+                                                                {
+                                                                    time = "hour";
+                                                                }
+                                                                else
+                                                                {
+                                                                    time = "hours";
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            if (timePassed == 1)
+                                                            {
+                                                                time = "minute";
+                                                            }
+                                                            else
+                                                            {
+                                                                time = "minutes";
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+                                                asked @timePassed @time ago by
+
+
+                                                @Html.ActionLink(post.StudentName, "ViewStudent", "Students", new { id = post.StudentId }, null)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+</div>
 
 
 @section scripts{
@@ -69,5 +174,5 @@
             });
 
         });
-    </script>    
+    </script>
 }

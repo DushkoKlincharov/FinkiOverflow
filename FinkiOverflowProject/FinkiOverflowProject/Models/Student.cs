@@ -17,11 +17,15 @@ namespace FinkiOverflowProject.Models
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [Required]
         public string ImageURL { get; set; }
+        public string City { get; set; }
+        public Module Module { get; set; }
+        public string Description { get; set; }
+        public string Skills { get; set; }
 
         // Foreign keys
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Post> Posts { get; set; }
+        public string UserId { get; set; }
     }
 }

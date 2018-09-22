@@ -1,0 +1,133 @@
+﻿@using FinkiOverflowProject.Models
+@model List<SubjectViewModel>
+
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item active">Settings</li>
+    <li class="breadcrumb-item active">Modify posts</li>
+</ol>
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Top subjects
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="post-table" class="table">
+                <thead style="display:none;">
+                    <tr>
+                        <th style="width:75%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (SubjectViewModel subject in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="card border-0">
+
+                                        <div class="card-header clearfix">
+                                            <a class="float-left" data-toggle="modal" data-target=@String.Format("#myModal{0}",subject.Id) href="#" role="button">
+                                                @subject.Name
+                                            </a>
+                                            <!-- The Modal -->
+                                            <div class="modal hide fade in" id=@String.Format("myModal{0}",subject.Id) data-keyboard="false" data-backdrop="static">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">@subject.Name</h4>
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        </div>
+
+                                                        <!-- Modal body -->
+                                                        <div class="modal-body">
+                                                            @subject.Description
+                                                        </div>
+
+                                                        <!-- Modal footer -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="float-right">
+                                                <button data-toggle="modal" data-target="#deleteModal" type="button" class="btn btn-danger js-delete-button" data-subject-id="@subject.Id" style="width:50px;"><span class="fa fa-times"></span></button>
+                                                <!-- The Modal -->
+                                                <div class="modal hide fade in" id="deleteModal" data-keyboard="false" data-backdrop="static">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+
+                                                            <!-- Modal Header -->
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">@subject.Name</h4>
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            </div>
+
+                                                            <!-- Modal body -->
+                                                            <div class="modal-body">
+                                                                If you delete this subject, all the posts related to this subject will
+                                                                also be deleted. Are you sure you want to proceed ?
+                                                            </div>
+
+                                                            <!-- Modal footer -->
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-success js-delete" data-dismiss="modal" data-subject-id="@subject.Id">OK</button>
+                                                                <a class="btn btn-primary" href="@Url.Action("ViewPostsForSubject","Posts",new { id = subject.Id})">View posts</a>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <a href="@Url.Action("Edit","Subjects",new { id = subject.Id})" class="btn btn-success" style="width:50px;"><span class="fa fa-edit"></span></a>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer clearfix border-0">
+                                            <small class="text-muted" title="Top subject">@subject.Year</small>
+                                            <span class="float-right">Number of posts: @subject.NumberOfPosts</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            var table = $("#post-table").DataTable({
+                searching: false,
+                lengthChange: false
+            });
+
+            $(".js-delete").on("click", function () {
+                var button = $(this);
+                var btn = $(`[data-subject-id=${button.attr("data-subject-id")}].js-delete-button`);
+                $.ajax({
+                    method: "DELETE",
+                    url: "/api/SubjectsApi/DeleteSubjectAndItsPosts/" + button.attr("data-subject-id"),
+                    success: function () {
+                        table.row(btn.parents("tr")).remove().draw();
+                    }
+                });
+            });
+
+        });
+    </script>
+}

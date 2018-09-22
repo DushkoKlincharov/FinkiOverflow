@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -28,11 +29,29 @@ namespace FinkiOverflowProject.Models
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Module> Modules { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<StudentPost> StudentPosts { get; set; }
+        public DbSet<StudentComment> StudentComments { get; set; }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
+        }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<StudentPost>()
+                .HasKey(s => new { s.StudentId, s.PostId })
+                .HasRequired(s => s.Student)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<StudentComment>()
+               .HasKey(s => new { s.StudentId, s.CommentId })
+               .HasRequired(s => s.Student)
+               .WithMany()
+               .WillCascadeOnDelete(false);
         }
     }
 }

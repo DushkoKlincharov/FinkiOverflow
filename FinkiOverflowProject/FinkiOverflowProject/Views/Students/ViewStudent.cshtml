@@ -1,0 +1,201 @@
+﻿@using FinkiOverflowProject.Models
+@model StudentViewModel
+
+@{
+    ViewBag.MaxLength = 70;
+    ViewBag.commentText = "";
+    ViewBag.postTitle = "";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        @Html.ActionLink("Students", "ViewAllStudents", "Students", null, null)
+    </li>
+    <li class="breadcrumb-item active">@Model.FirstName @Model.LastName</li>
+</ol>
+
+<section id="about">
+    <div class="row about-col mb-5">
+        <div class="col-md-3">
+            <div class="about-col">
+                <div class="img">
+                    <div class="bg-success" style="height: 150px"></div>
+                    <a href="#" class="icon"> </a>
+                </div>
+                <h2 class="title"><a href="#">@Model.FirstName @Model.LastName</a></h2>
+                <div class="row text-center pt-4">
+                    <div class="col">
+                        <span class="text-lg">@Model.NumberOfPosts</span>
+                        <p class="text-muted text-uppercase">
+                            @if (Model.NumberOfPosts == 1)
+                            {
+                                <small>Post</small>
+                            }
+                            else
+                            {
+                                <small>Posts</small>
+                            }
+                        </p>
+                    </div>
+                    <div class="col">
+                        <span class="text-lg">@Model.NumberOfComments</span>
+                        <p class="text-muted text-uppercase">
+                            @if (Model.NumberOfComments == 1)
+                            {
+                                <small>Comment</small>
+                            }
+                            else
+                            {
+                                <small>Comments</small>
+                            }
+                        </p>
+                    </div>
+                    <div class="col">
+                        <span class="text-lg">@Model.NumberOfSubjects</span>
+                        <p class="text-muted text-uppercase">
+                            @if (Model.NumberOfSubjects == 1)
+                            {
+                                <small>Subject</small>
+                            }
+                            else
+                            {
+                                <small>Subjects</small>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <h4>@Model.UserName</h4>
+            @if (Model.Description.IsEmpty())
+            {
+                <span class="text-muted mt-3">Apparently, this user prefers to keep an air of mystery about them.</span>
+            }
+            else
+            {
+                <h4 class="text-muted">@Model.Module, ФИНКИ</h4>
+                <p>@Model.Description</p>
+            }
+            @if (Model.Skills.Count != 0)
+            {
+                <div class="mt-auto">
+                    <span class="font-weight-bold">I have experience with: </span>
+                    <ul class="mt-auto">
+                        @{
+                            foreach (string skill in Model.Skills)
+                            {
+                                <li>@skill</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+        <div class="col-4">
+            <h4>
+                Top subjects
+                @if (Model.Subjects.Count < 5)
+                {
+                    <span class="text-muted">(@Model.Subjects.Count)</span>
+                }
+                else
+                {
+                    <span class="text-muted">(5)</span>
+                }
+            </h4>
+            <hr />
+            <ul class="list-unstyled">
+                @{
+                    foreach (KeyValuePair<Subject, int> pair in Model.Subjects)
+                    {
+                        <li class="clearfix pb-2">
+                            @Html.ActionLink(pair.Key.Name, "ViewPostsForSubject", "Posts", new { id = pair.Key.Id }, new { @class = "float-left" })
+                            <span class="badge badge-primary badge-pill float-right">@pair.Value</span>
+                        </li>
+                    }
+                }
+            </ul>
+            <div class="text-right">
+                <span class="text-muted">View all </span>@Html.ActionLink("subjects", "ViewAllSubjects", "Subjects")
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <h4>Top posts<span class="text-muted">(@Model.Posts.Count)</span></h4>
+            <hr />
+            @{
+                foreach (Post post in Model.Posts)
+                {
+                    <div class="media">
+                        <div class="bg-success px-3 text-white mr-3">
+                            @post.Votes
+                        </div>
+                        <div class="media-body">
+                            <div class="mt-0 clearfix">
+                                <p class="float-left">
+                                    @if (post.Title.Length < ViewBag.MaxLength)
+                                    {
+                                        ViewBag.postTitle = post.Title;
+                                    }
+                                    else
+                                    {
+                                        ViewBag.postTitle = post.Title.Substring(0, ViewBag.MaxLength) + "...";
+                                    }
+                                    @Html.ActionLink((string)ViewBag.postTitle, "ViewComments", "Comments", new { postId = post.Id }, null)
+                                </p>
+                                <p class="float-right text-muted">
+                                    @post.TimeAsked.Date.ToLongDateString()
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="text-right">
+                <span class="text-muted">View @Model.UserName's </span>@Html.ActionLink("posts", "ViewAllPosts", "Students", new { id = Model.Id }, null)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Top comments<span class="text-muted">(@Model.Comments.Count)</span></h4>
+            <hr />
+            @{
+                foreach (Comment comment in Model.Comments)
+                {
+                    <div class="media">
+                        <div class="bg-success px-3 text-white mr-3">
+                            @comment.VotesUp
+                        </div>
+                        <div class="media-body">
+                            <div class="mt-0 clearfix">
+                                <p class="float-left">
+                                    @if (comment.Text.Length < ViewBag.MaxLength)
+                                    {
+                                        ViewBag.commentText = comment.Text;
+                                    }
+                                    else
+                                    {
+                                        ViewBag.commentText = comment.Text.Substring(0, ViewBag.MaxLength) + "...";
+                                    }
+                                    @Html.ActionLink((string)ViewBag.commentText, "ViewComments", "Comments", new { postId = comment.PostId }, null)
+                                </p>
+                                <p class="float-right text-muted">
+                                    @comment.TimeAnswered.Date.ToLongDateString()
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="text-right">
+                <span class="text-muted">View @Model.UserName's </span>@Html.ActionLink("comments", "ViewAllComments", "Students", new { id = Model.Id }, null)
+            </div>
+        </div>
+    </div>
+</section>
+
+
