@@ -198,7 +198,9 @@ namespace FinkiOverflowProject.Controllers
                 LastName = student.LastName,
                 City = student.City,
                 Id = student.Id,
-                Modules = db.Modules.Select(s => s.Name).ToList()
+                Modules = db.Modules.Select(s => s.Name).ToList(),
+                Description = student.Description,
+                ImageURL = student.ImageURL
             };
             return View(model);
         }
@@ -216,7 +218,6 @@ namespace FinkiOverflowProject.Controllers
                 student.ImageURL = model.ImageURL;
                 student.Description = model.Description;
                 student.City = model.City;
-                student.Skills = model.Skills;
                 student.Module = db.Modules.FirstOrDefault(m => m.Name.Equals(model.selectedModule));
                 db.SaveChanges();
                 return RedirectToAction("ViewStudent", "Students", new { id = model.Id });

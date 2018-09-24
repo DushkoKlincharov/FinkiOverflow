@@ -170,8 +170,15 @@
 
             $("#post-table").DataTable({
                 searching: false,
-                lengthChange: false
+                lengthChange: false,
+                orderClasses: false,
+                bSort: false
             });
+
+            $("#sidebar-post").removeClass("active");
+            $("#sidebar-student").removeClass("active");
+            $("#sidebar-subject").removeClass("active");
+            $("#sidebar-post").addClass("active");
 
         });
     </script>

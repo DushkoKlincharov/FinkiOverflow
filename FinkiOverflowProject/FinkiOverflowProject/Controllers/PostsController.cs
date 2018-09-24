@@ -34,6 +34,8 @@ namespace FinkiOverflowProject.Controllers
         public ActionResult Guest()
         {
             // Sign out user
+            var authenticationManager = System.Web.HttpContext.Current.GetOwinContext().Authentication;
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index");
         }
 

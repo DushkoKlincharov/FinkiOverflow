@@ -24,7 +24,7 @@
                         <div class="bg-success" style="height: 150px"></div>
                         <a href="#" class="icon"> </a>
                     </div>
-                    <h2 class="title"><a href="#">@Model.FirstName @Model.LastName</a></h2>
+                    <h2 class="title"><a href="@Url.Action("ViewStudent","Students", new { id = Model.Id })">@Model.FirstName @Model.LastName</a></h2>
                     <div class="row text-center pt-4">
                         <div class="col">
                             <span class="text-lg">@Model.NumberOfPosts</span>

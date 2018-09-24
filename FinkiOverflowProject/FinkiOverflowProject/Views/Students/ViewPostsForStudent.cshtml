@@ -148,7 +148,9 @@
 
             var table = $("#post-table").DataTable({
                 searching: false,
-                lengthChange: false
+                lengthChange: false,
+                orderClasses: false,
+                bSort: false
             });
 
             $(".js-delete").on("click", function () {

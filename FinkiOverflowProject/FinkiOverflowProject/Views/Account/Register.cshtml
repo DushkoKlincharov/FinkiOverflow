@@ -63,14 +63,14 @@
                         <div class="form-row">
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    @Html.TextBoxFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
                                     @Html.LabelFor(m => m.Password)
                                     @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-label-group">
-                                    @Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm password" })
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm password" })
                                     @Html.LabelFor(m => m.ConfirmPassword)
                                     @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                                 </div>

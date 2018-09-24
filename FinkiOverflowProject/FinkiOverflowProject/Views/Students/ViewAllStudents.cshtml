@@ -44,7 +44,7 @@
                     }
                     <td>
                         <div class="media">
-                            <img src="https://www.gravatar.com/avatar/d291e4dfbf14dcc8874bd4fa620fac23?s=96&d=identicon&r=PG&f=1" class="img-fluid">
+                            <img src="@student.ImageUrl" class="img-fluid" width="96" height="96">
                             <div class="media-body ml-2">
                                 @Html.ActionLink(student.Username, "ViewStudent", "Students", new { id = student.StudentId }, null)<br />
                                 <small class="text-muted">@student.City</small><br>
@@ -83,7 +83,12 @@
                 table.addClass("w-50");
             } else if (modelLength == 3) {
                 table.addClass("w-75");
-            }
+            }   
+
+            $("#sidebar-post").removeClass("active");
+            $("#sidebar-student").removeClass("active");
+            $("#sidebar-subject").removeClass("active");
+            $("#sidebar-student").addClass("active");
         });
     </script>
 }

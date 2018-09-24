@@ -21,9 +21,9 @@
             <div class="about-col">
                 <div class="img">
                     <div class="bg-success" style="height: 150px"></div>
-                    <a href="#" class="icon"> </a>
+                    <a href="#" class="icon" style="background-image: url(@Model.ImageUrl); background-size: cover"> </a>
                 </div>
-                <h2 class="title"><a href="#">@Model.FirstName @Model.LastName</a></h2>
+                <h2 class="title">@Model.FirstName @Model.LastName</h2>
                 <div class="row text-center pt-4">
                     <div class="col">
                         <span class="text-lg">@Model.NumberOfPosts</span>
@@ -77,20 +77,6 @@
             {
                 <h4 class="text-muted">@Model.Module, ФИНКИ</h4>
                 <p>@Model.Description</p>
-            }
-            @if (Model.Skills.Count != 0)
-            {
-                <div class="mt-auto">
-                    <span class="font-weight-bold">I have experience with: </span>
-                    <ul class="mt-auto">
-                        @{
-                            foreach (string skill in Model.Skills)
-                            {
-                                <li>@skill</li>
-                            }
-                        }
-                    </ul>
-                </div>
             }
         </div>
         <div class="col-4">
