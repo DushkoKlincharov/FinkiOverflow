@@ -204,6 +204,7 @@ namespace FinkiOverflowProject.Controllers
                 Comments.Add(c);
             }
             string currentStudentId = User.Identity.GetUserId();
+            Student student = db.Students.FirstOrDefault(s => s.UserId.Equals(currentStudentId));
             CommentsViewModel model = new CommentsViewModel
             {
                 PostId = post.Id,
@@ -218,7 +219,7 @@ namespace FinkiOverflowProject.Controllers
                 Comments = Comments,
                 SubjectId = post.Subject.Id,
                 SubjectName = post.Subject.Name,
-                CurrentStudentId = db.Students.FirstOrDefault(s => s.UserId.Equals(currentStudentId)).Id,
+                CurrentStudentId = student == null ? -1 : student.Id,
                 isUserLoggedIn = string.IsNullOrEmpty(currentStudentId) ? false : true,
                 TimeAsked = post.TimeAsked
         };

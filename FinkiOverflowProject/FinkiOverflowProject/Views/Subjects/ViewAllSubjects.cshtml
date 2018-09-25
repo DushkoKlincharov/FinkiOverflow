@@ -51,9 +51,9 @@
                                 <small class="text-muted" title="Number of posts">@subject.NumberOfPosts</small>
                             </div>
                             <div style="font-size: 12px;display:block;height:70px;" class="py-2">
-                                @if(subject.Description.Length > 169)
+                                @if(subject.Description.Length > 120)
                                 {
-                                    <span>@subject.Description.Substring(0, 169)</span>
+                                    <span>@String.Concat(subject.Description.Substring(0, 120),"...")</span>
                                 }
                                 else
                                 {
