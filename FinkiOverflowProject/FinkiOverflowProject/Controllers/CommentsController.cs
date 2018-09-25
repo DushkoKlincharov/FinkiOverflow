@@ -129,8 +129,9 @@ namespace FinkiOverflowProject.Controllers
 
         public ActionResult ViewComments(int postId)
         {
-          
-            return View(GetCommentsViewModelFor(postId));
+            CommentsViewModel model = GetCommentsViewModelFor(postId);
+            model.Comments = model.Comments.OrderByDescending(s => (s.VotesUp - s.VotesDown)).ThenByDescending(s => s.TimeAnswered).ToList();
+            return View(model);
         }
 
         [Authorize(Roles = "Admin")]
